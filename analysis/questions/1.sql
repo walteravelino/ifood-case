@@ -5,8 +5,7 @@ nyc_taxi.processed;
 SELECT
     pickup_year,
     pickup_month,
-    ROUND(avg_amount, 2) AS avg_amount,
-    CONCAT(CAST(pickup_year AS STRING), '-', LPAD(CAST(pickup_month AS STRING), 2, '0')) AS year_month
+    ROUND(avg_amount, 2) AS avg_amount
 FROM gold_monthly_avg_amount
 ORDER BY
-    year_month DESC;
+    CONCAT(CAST(pickup_year AS STRING), '-', LPAD(CAST(pickup_month AS STRING), 2, '0')) DESC;
