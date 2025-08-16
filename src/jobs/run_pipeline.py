@@ -16,23 +16,28 @@ def main():
     pipeline = TaxiPipeline(spark)
     paths, tables = Paths(), Tables()
 
-    # Leitura sem schema
-    yellow_df = pipeline.read_without_schema(f"{paths.landing}/yellow_tripdata_*.parquet")
-    green_df = pipeline.read_without_schema(f"{paths.landing}/green_tripdata_*.parquet")
+    try:
+        # Leitura dos dados
+        df = pipeline.read_landing_data(paths.landing)
 
-    # Processamento
-    silver_df = (pipeline.process_to_silver(yellow_df, "yellow")
-                 .unionByName(pipeline.process_to_silver(green_df, "green")))
+        # Processamento para silver
+        silver_df = pipeline.process_to_silver(df)
 
-    # Persistência
-    (silver_df.write
-     .format("delta")
-     .mode("overwrite")
-     .partitionBy("pickup_year", "pickup_month")
-     .saveAsTable(tables.silver))
+        # Persistência
+        (silver_df.write
+         .format("delta")
+         .mode("overwrite")
+         .partitionBy("pickup_year", "pickup_month")
+         .saveAsTable(tables.silver))
 
-    # Criação das tabelas gold
-    pipeline.create_gold_tables(silver_df, tables)
+        # Criação das tabelas gold
+        pipeline.create_gold_tables(silver_df, tables)
+
+        print("Pipeline executado com sucesso!")
+
+    except Exception as e:
+        print(f"Erro durante a execução do pipeline: {str(e)}")
+        raise
 
 
 if __name__ == "__main__":
