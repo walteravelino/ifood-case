@@ -7,7 +7,9 @@ Pipeline de processamento para dados de táxis de Nova York.
 ```
 ifood-case/
 ├── analysis/
-│   └── case_questions.sql  # Queries para leitura 
+│   └── questions/  # Queries para leitura das respostas
+│       ├── 1.sql
+│       └── 2.sql
 ├── src/
 │   ├── config.py       # Configurações de paths e tabelas
 │   ├── pipeline.py     # Lógica de processamento
